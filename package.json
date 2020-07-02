@@ -1,7 +1,7 @@
 {
    "name": "snakepony",
    "description": "A simple snake game HTML5-canvas TS game with ponies",
-   "repository": "git@github.com:ponydevs/snakepony.git",
+   "repository": "https://github.com/mathieucaroff/snakepony",
    "license": "ISC",
    "version": "1.0.0",
    "scripts": {

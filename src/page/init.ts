@@ -7,6 +7,8 @@ import { getUrlParam } from '../util/urlParam'
 import { h } from './lib/hyper'
 import { DisplayProp } from '../display/display'
 
+import { repository } from '../../package.json'
+
 interface InitProp {
    document: Document
    location: Location
@@ -40,7 +42,7 @@ export let init = (prop: InitProp) => {
    canvas.height = 600
 
    let corner = h('i', {
-      innerHTML: githubCornerHTML('https://github.com/ponydevs/snakepony'),
+      innerHTML: githubCornerHTML(repository),
    })
 
    document.body.append(
