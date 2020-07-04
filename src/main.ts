@@ -16,11 +16,23 @@ export let main = async () => {
 
    let engine = createEngine({
       config,
-      input,
       random,
    })
 
-   createDisplay({ canvas, config, screenSize, engine })
+   input.left.subscribe(engine.move.left)
+   input.right.subscribe(engine.move.right)
+   input.up.subscribe(engine.move.up)
+   input.down.subscribe(engine.move.down)
+
+   let display = createDisplay({ canvas, config, tailPosition: engine.getTail() })
+
+   // Connecting modules
+   engine.add.subscribe(display.add)
+   engine.remove.subscribe(display.remove)
+   engine.food.subscribe(display.handleFood)
+   engine.score.attach(display.handleScore)
+
+   screenSize.attach((size) => display.resizeScreen(size, engine.score.read()))
 
    engine.flushInit()
 }

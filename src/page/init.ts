@@ -1,13 +1,12 @@
 import { fromEvent } from 'rxjs'
+import { repository } from '../../package.json'
 import { githubCornerHTML } from '../lib/githubCorner'
 import { SnakeponyConfig } from '../type/snakeponyConfig'
 import { createNoisyStateWithObservable } from '../util/noisyState'
 import { randomSeed } from '../util/randomSeed'
 import { getUrlParam } from '../util/urlParam'
 import { h } from './lib/hyper'
-import { DisplayProp } from '../display/display'
-
-import { repository } from '../../package.json'
+import { ScreenSize } from '../type/snakepony'
 
 interface InitProp {
    document: Document
@@ -26,6 +25,8 @@ let getConfig = (prop: InitProp) => {
          x: sizeX(),
       }),
       seed: () => randomSeed(),
+      topologyLeftRight: () => 'border',
+      topologyTopBottom: () => 'border',
    })
 
    console.info(`?seed=${config.seed}`)
@@ -54,9 +55,7 @@ export let init = (prop: InitProp) => {
       corner,
    )
 
-   let screenSize: DisplayProp['screenSize'] = createNoisyStateWithObservable(
-      fromEvent(window, 'resize'),
-   )(() => ({
+   let screenSize: ScreenSize = createNoisyStateWithObservable(fromEvent(window, 'resize'))(() => ({
       y: window.innerHeight,
       x: window.innerWidth,
    }))

@@ -1,21 +1,13 @@
-import { prng } from '../lib/seedrandom'
-import { SnakeponyConfig } from '../type/snakeponyConfig'
-import { Pair, Player, PonyInput, Direction, Move, Score, Engine } from '../type/snakepony'
-import { w } from '../util/window'
-import { pairEqual, pairAdd } from '../util/pair'
 import { Subject } from 'rxjs'
-import { createArray2d } from '../util/array2d'
-import { createNoisyState, NoisyState } from '../util/noisyState'
-import { getDelta } from '../util/direction'
 
-export interface EngineProp {
-   config: SnakeponyConfig
-   input: PonyInput
-   random: prng
-}
+import { Direction, Engine, EngineProp, Move, Pair, Player, Score } from '../type/snakepony'
+import { createArray2d } from '../util/array2d'
+import { getDelta } from '../util/direction'
+import { createNoisyState, NoisyState } from '../util/noisyState'
+import { pairAdd, pairEqual } from '../util/pair'
 
 export let createEngine = (prop: EngineProp) => {
-   let { config, input, random } = prop
+   let { config, random } = prop
 
    let gridSquareNumber = config.gridSize.x * config.gridSize.y
 
@@ -37,9 +29,11 @@ export let createEngine = (prop: EngineProp) => {
     * Let the player do a move
     *
     * @param direction
-    * @param delta The delta Pair that leads the player to an odd wall
     */
-   let move = (direction: Direction, delta: Pair) => {
+   let move = (direction: Direction) => {
+      //  The delta Pair that leads the player to an odd wall
+      let delta = getDelta(direction)
+
       let newHead = pairAdd(player.body.slice(-1)[0], delta)
       let { y, x } = newHead
 
@@ -77,24 +71,6 @@ export let createEngine = (prop: EngineProp) => {
       }
    }
 
-   /**
-    * move_
-    *
-    * Prepare a move for the given delta
-    *
-    * @param direction The delta Pair; see `move()`
-    */
-   let move_ = (direction: Direction) => {
-      let delta = getDelta(direction)
-      if (Math.abs(delta.x) + Math.abs(delta.y) !== 1) throw new Error()
-      return () => move(direction, delta)
-   }
-
-   input.left.subscribe(move_('left'))
-   input.right.subscribe(move_('right'))
-   input.up.subscribe(move_('up'))
-   input.down.subscribe(move_('down'))
-
    let getTail = () => {
       return player.body[0]
    }
@@ -128,7 +104,7 @@ export let createEngine = (prop: EngineProp) => {
    }
 
    let flushInit = () => {
-      move_('right')()
+      move('right')
    }
 
    let me: Engine = {
@@ -138,6 +114,12 @@ export let createEngine = (prop: EngineProp) => {
       food,
       getTail,
       flushInit,
+      move: {
+         left: () => move('left'),
+         right: () => move('right'),
+         up: () => move('up'),
+         down: () => move('down'),
+      },
    }
 
    return me

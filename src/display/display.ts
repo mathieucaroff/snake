@@ -1,23 +1,25 @@
-import { Engine, Move, Pair, Score, Side5 } from '../type/snakepony'
+import { Move, Pair, Score, Side5 } from '../type/snakepony'
 import { SnakeponyConfig } from '../type/snakeponyConfig'
 import { createArray2d } from '../util/array2d'
+import { getDelta, getReverse, getSide } from '../util/direction'
 import { getContext2d } from '../util/getContext2d'
-import { NoisyState } from '../util/noisyState'
-import { lightGrey, white, black } from './color'
-import { getDelta, getSide, getReverse } from '../util/direction'
 import { pairAdd, pairEqual } from '../util/pair'
+import { black, lightGrey, white } from './color'
 
 // Display interface
 export interface DisplayProp {
    canvas: HTMLCanvasElement
    config: SnakeponyConfig
-   engine: Engine
-   screenSize: ScreenSize
+   tailPosition: Pair
 }
 
-export type ScreenSize = NoisyState<Pair>
-
-export type Display = void
+export interface Display {
+   resizeScreen(size: Pair, score: Score): void
+   add(move: Move): void
+   remove(): void
+   handleScore(score: Score): void
+   handleFood(food: Pair): void
+}
 
 // Display state - Square, grid
 export type DisplaySquare = DisplayPattern[]
@@ -38,11 +40,10 @@ export interface BodyPattern {
 export type DisplayBody = Move[]
 
 export let createDisplay = (prop: DisplayProp): Display => {
-   let { canvas, config, engine, screenSize } = prop
+   let { canvas, config, tailPosition: tailPos } = prop
    let ctx = getContext2d(canvas)
 
    // State
-   let tailPos: Pair = engine.getTail()
    let headPos = { ...tailPos }
    let grid = createArray2d<DisplaySquare>(config.gridSize, (pos) =>
       pairEqual(pos, headPos)
@@ -65,11 +66,10 @@ export let createDisplay = (prop: DisplayProp): Display => {
    let foodSize: number
    let foodOffset: number
    let gridRightSide: number
-   let gridBottom: number
 
-   const GAME_RIGHT_SIDE_PANEL = 120
-   const PAGE_TOP_OFFSET = 80
-   const PAGE_RIGHT_OFFSET = 24
+   let GAME_RIGHT_SIDE_PANEL = 120
+   let PAGE_TOP_OFFSET = 80
+   let PAGE_RIGHT_OFFSET = 24
 
    let resizeLayout = (window: Pair) => {
       let canvasSize = {
@@ -96,16 +96,15 @@ export let createDisplay = (prop: DisplayProp): Display => {
       foodOffset = squareSize / 2 - foodSize / 2
 
       gridRightSide = config.gridSize.x * squareSize
-      gridBottom = config.gridSize.y * squareSize
 
       canvas.height = canvasSize.y
       canvas.width = canvasSize.x
    }
 
-   let renderScreen = () => {
+   let renderScreen = (score: Score) => {
       renderBackground()
       renderGrid()
-      renderScore(engine.score.read())
+      renderScore(score)
    }
 
    let renderBackground = () => {
@@ -197,9 +196,9 @@ export let createDisplay = (prop: DisplayProp): Display => {
    }
 
    //
-   // Subscribtions
+   // Subscriptions
    //
-   engine.add.subscribe((move) => {
+   let add = (move: Move): void => {
       if (move.type == 'walk') {
          body.push(move)
 
@@ -230,8 +229,9 @@ export let createDisplay = (prop: DisplayProp): Display => {
       } else {
          throw new Error()
       }
-   })
-   engine.remove.subscribe(() => {
+   }
+
+   let remove = () => {
       let move = body.shift()
       if (move === undefined || move.type !== 'walk') {
          throw new Error()
@@ -258,19 +258,20 @@ export let createDisplay = (prop: DisplayProp): Display => {
 
          tailPos = newTailPos
       }
-   })
-   screenSize.attach((size) => {
+   }
+
+   let resizeScreen = (size: Pair, score: Score): void => {
       resizeLayout(size)
-      renderScreen()
-   })
+      renderScreen(score)
+   }
 
    // Score
-   engine.score.attach((score) => {
+   let handleScore = (score: number): void => {
       renderScore(score)
-   })
+   }
 
    // Food
-   engine.food.subscribe((food) => {
+   let handleFood = (food) => {
       let last = lastFoodPosition
       let lastSquare = grid[last.y][last.x]
       let foodSquare = grid[food.y][food.x]
@@ -286,5 +287,13 @@ export let createDisplay = (prop: DisplayProp): Display => {
       renderSquare(lastSquare, last)
       renderSquare(foodSquare, food)
       lastFoodPosition = food
-   })
+   }
+
+   return {
+      add,
+      remove,
+      resizeScreen,
+      handleScore,
+      handleFood,
+   }
 }
