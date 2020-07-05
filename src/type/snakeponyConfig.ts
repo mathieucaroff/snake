@@ -22,8 +22,9 @@ export interface SnakeponyConfig {
     */
    seed: string
    /**
-    * topology -- the topology of the board of the game
+    * topology -- the name of the topology of the board of the game
     */
+   topology: string
    topologyLeftRight: Topology1D
    topologyTopBottom: Topology1D
 }

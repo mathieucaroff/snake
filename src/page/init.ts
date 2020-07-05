@@ -7,6 +7,7 @@ import { randomSeed } from '../util/randomSeed'
 import { getUrlParam } from '../util/urlParam'
 import { h } from './lib/hyper'
 import { ScreenSize } from '../type/snakepony'
+import { topologyFromName } from '../util/topology'
 
 interface InitProp {
    document: Document
@@ -21,8 +22,9 @@ let getConfig = (prop: InitProp) => {
       sizeY: ({ size }) => size(),
       sizeX: ({ size }) => Math.floor(1.5 * size()),
       seed: () => randomSeed(),
-      topologyLeftRight: () => 'wall',
-      topologyTopBottom: () => 'wall',
+      topology: () => 'rectangle',
+      topologyLeftRight: ({ topology }) => topologyFromName(topology())?.leftRight ?? 'wall',
+      topologyTopBottom: ({ topology }) => topologyFromName(topology())?.topBottom ?? 'wall',
    })
 
    console.info(`?seed=${config.seed}`)

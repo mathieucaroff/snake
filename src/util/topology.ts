@@ -1,6 +1,6 @@
 import { Topology2D } from '../type/snakepony'
 
-let getTopologyName = (topology: Topology2D) => {
+export let getTopologyName = (topology: Topology2D) => {
    let border = 0
    let loop = 0
    let crossed = 0
@@ -28,13 +28,13 @@ let getTopologyName = (topology: Topology2D) => {
    } else if (loop == 2) {
       return 'torus'
    } else if (crossed == 2) {
-      return 'real projective plan'
+      return 'projective' // 'real projective plan'
    } else if (border == 0) {
       // => loop == 1 && crossed == 1
-      return 'klein bottle'
+      return 'klein' // 'klein bottle'
    } else if (loop == 0) {
       // => _
-      return 'möbius strip'
+      return 'mobius' // 'möbius strip'
    } else if (crossed == 0) {
       // => _
       return 'ribbon'
@@ -45,19 +45,34 @@ let getTopologyName = (topology: Topology2D) => {
 
 export type TopologyName = ReturnType<typeof getTopologyName>
 
-let exampleTopologyFromName = (name: TopologyName): Topology2D => {
-   switch (name) {
-      case 'rectangle':
-         return { leftRight: 'wall', topBottom: 'wall' }
-      case 'torus':
-         return { leftRight: 'loop', topBottom: 'loop' }
-      case 'real projective plan':
-         return { leftRight: 'crossed', topBottom: 'crossed' }
-      case 'klein bottle':
-         return { leftRight: 'loop', topBottom: 'crossed' }
-      case 'möbius strip':
-         return { leftRight: 'wall', topBottom: 'crossed' }
-      case 'ribbon':
-         return { leftRight: 'wall', topBottom: 'loop' }
+export let topologyFromName = (name: string): Topology2D | undefined => {
+   let topology: Topology2D | undefined = undefined
+
+   if (false) {
+   } else if (name.match(/rect|square|normal|wall/)) {
+      topology = { leftRight: 'wall', topBottom: 'wall' }
+   } else if (name.match(/torus/)) {
+      topology = { leftRight: 'loop', topBottom: 'loop' }
+   } else if (name.match(/real|projective|plan/)) {
+      topology = { leftRight: 'crossed', topBottom: 'crossed' }
+   } else if (name.match(/klein|bottle/)) {
+      topology = { leftRight: 'loop', topBottom: 'crossed' }
+   } else if (name.match(/m..?bius|strip/)) {
+      topology = { leftRight: 'wall', topBottom: 'crossed' }
+   } else if (name.match(/ribbon|loop/)) {
+      topology = { leftRight: 'wall', topBottom: 'loop' }
    }
+
+   if (topology === undefined) {
+      return
+   }
+
+   if (name.match(/long/)) {
+      topology = {
+         leftRight: topology.topBottom,
+         topBottom: topology.leftRight,
+      }
+   }
+
+   return topology
 }
