@@ -99,6 +99,7 @@ export interface DisplayProp {
    canvas: HTMLCanvasElement
    gridSize: Pair
    tailPosition: Pair
+   topology: Topology2D
 }
 
 export interface Display {

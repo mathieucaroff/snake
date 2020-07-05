@@ -20,21 +20,28 @@ export let main = async () => {
       y: config.sizeY,
    }
 
+   let topology = {
+      leftRight: config.topologyLeftRight,
+      topBottom: config.topologyTopBottom,
+   }
+
    let engine = createEngine({
       feed: config.feed,
       gridSize,
       random,
-      topology: {
-         leftRight: config.topologyLeftRight,
-         topBottom: config.topologyTopBottom,
-      },
+      topology,
    })
 
    entries(input.directive).forEach(([name, observable]) => {
       observable.subscribe(engine.move[name])
    })
 
-   let display = createDisplay({ canvas, gridSize, tailPosition: engine.getTail() })
+   let display = createDisplay({
+      canvas,
+      gridSize,
+      tailPosition: engine.getTail(),
+      topology,
+   })
 
    // Connecting modules
    engine.add.subscribe(display.add)

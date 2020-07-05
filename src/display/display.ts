@@ -3,13 +3,13 @@ import { createArray2d } from '../util/array2d'
 import { getDelta, getReverse5, getSide5 } from '../util/direction'
 import { getContext2d } from '../util/getContext2d'
 import { pairAdd, pairEqual } from '../util/pair'
-import { black, lightGrey, white } from './color'
+import { black, lightGrey, white, darkCoal } from './color'
 
 // Display state - Body
 export type DisplayBody = Move[]
 
 export let createDisplay = (prop: DisplayProp): Display => {
-   let { canvas, gridSize, tailPosition: tailPos } = prop
+   let { canvas, gridSize, tailPosition: tailPos, topology } = prop
    let ctx = getContext2d(canvas)
 
    // State
@@ -34,9 +34,12 @@ export let createDisplay = (prop: DisplayProp): Display => {
    let bodyOffset: number
    let foodSize: number
    let foodOffset: number
-   let gridRightSide: number
+   let boardRightSide: number
+   let boardBottom: number
 
    let GAME_RIGHT_SIDE_PANEL = 120
+   let GAME_BORDER_X = 1
+   let GAME_BORDER_Y = 1
    let PAGE_TOP_OFFSET = 80
    let PAGE_RIGHT_OFFSET = 24
 
@@ -45,17 +48,19 @@ export let createDisplay = (prop: DisplayProp): Display => {
          x: Math.max(window.x - PAGE_RIGHT_OFFSET, 64 + GAME_RIGHT_SIDE_PANEL),
          y: Math.max(window.y - PAGE_TOP_OFFSET, 64),
       }
+
       let available = {
-         x: canvasSize.x - GAME_RIGHT_SIDE_PANEL,
-         y: canvasSize.y,
+         x: canvasSize.x - GAME_RIGHT_SIDE_PANEL - 2 * GAME_BORDER_X,
+         y: canvasSize.y - 2 * GAME_BORDER_Y,
       }
+
       if (available.x * gridSize.y > available.y * gridSize.x) {
          // The constraint is vertical space
-         // Size is decided according to window.y
+         // Size is decided according to available.y
          squareSize = 2 * Math.floor(available.y / (2 * gridSize.y))
       } else {
          // The constraint is horizontal space
-         // Size is decided according to window.x
+         // Size is decided according to available.x
          squareSize = 2 * Math.floor(available.x / (2 * gridSize.x))
       }
 
@@ -64,7 +69,8 @@ export let createDisplay = (prop: DisplayProp): Display => {
       foodSize = 2 * Math.ceil((squareSize / 2) * 0.7)
       foodOffset = squareSize / 2 - foodSize / 2
 
-      gridRightSide = gridSize.x * squareSize
+      boardRightSide = gridSize.x * squareSize + 2 * GAME_BORDER_X
+      boardBottom = gridSize.y * squareSize + 2 * GAME_BORDER_Y
 
       canvas.height = canvasSize.y
       canvas.width = canvasSize.x
@@ -77,8 +83,25 @@ export let createDisplay = (prop: DisplayProp): Display => {
    }
 
    let renderBackground = () => {
-      ctx.fillStyle = '#000'
+      // Black base
+      ctx.fillStyle = black
       ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Grey Border
+      let x = 0
+      let y = 0
+      let w = boardRightSide
+      let h = boardBottom
+      if (topology.leftRight !== 'wall') {
+         x += GAME_BORDER_X
+         w -= 2 * GAME_BORDER_X
+      }
+      if (topology.topBottom !== 'wall') {
+         y += GAME_BORDER_Y
+         h -= 2 * GAME_BORDER_Y
+      }
+      ctx.fillStyle = lightGrey
+      ctx.fillRect(x, y, w, h)
    }
 
    let renderGrid = () => {
@@ -90,14 +113,14 @@ export let createDisplay = (prop: DisplayProp): Display => {
    }
 
    let renderSquare = (square: DisplaySquare, pair: Pair) => {
-      let x = squareSize * pair.x
-      let y = squareSize * pair.y
+      let x = GAME_BORDER_X + squareSize * pair.x
+      let y = GAME_BORDER_Y + squareSize * pair.y
 
       // Square background
       if ((pair.x + pair.y) % 2 == 0) {
-         ctx.fillStyle = '#222'
+         ctx.fillStyle = darkCoal
       } else {
-         ctx.fillStyle = '#000'
+         ctx.fillStyle = black
       }
       ctx.fillRect(x, y, squareSize, squareSize)
 
@@ -119,9 +142,14 @@ export let createDisplay = (prop: DisplayProp): Display => {
       ctx.fillRect(x, y, foodSize, foodSize)
    }
 
-   let renderBody = (pair: Pair, pattern: Side5) => {
-      let x = squareSize * pair.x + bodyOffset
-      let y = squareSize * pair.y + bodyOffset
+   /**
+    * renderBody -- render a piece of body of the snake
+    * @param pos where to render the pattern
+    * @param pattern what to render
+    */
+   let renderBody = (pos: Pair, pattern: Side5) => {
+      let x = GAME_BORDER_X + squareSize * pos.x + bodyOffset
+      let y = GAME_BORDER_Y + squareSize * pos.y + bodyOffset
       let w = bodyThickeness
       let h = bodyThickeness
 
@@ -147,9 +175,9 @@ export let createDisplay = (prop: DisplayProp): Display => {
          return
       }
       ctx.fillStyle = black
-      ctx.fillRect(gridRightSide, 0, canvas.width, canvas.height)
+      ctx.fillRect(boardRightSide, 0, canvas.width, canvas.height)
 
-      let x = gridRightSide + 30
+      let x = boardRightSide + 30
       let y = 50
       let scale = 1
 
