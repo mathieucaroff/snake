@@ -22,8 +22,12 @@ export type PonyInput = {
  * EngineProp -- the values consumed by the Engine constructor `createEngine`
  */
 export interface EngineProp {
-   config: SnakeponyConfig
+   /**
+    * gridSize -- gather the sizeX and sizeY of the board
+    */
+   gridSize: Pair
    random: prng
+   topology: Topology2D
 }
 
 /**
@@ -86,6 +90,21 @@ export type Topology1D = 'border' | 'loop' | 'crossed'
 //
 // Display
 //
+// Display interface
+export interface DisplayProp {
+   canvas: HTMLCanvasElement
+   gridSize: Pair
+   tailPosition: Pair
+}
+
+export interface Display {
+   resizeScreen(size: Pair, score: Score): void
+   add(move: Move): void
+   remove(): void
+   handleScore(score: Score): void
+   handleFood(food: Pair): void
+}
+
 export type ScreenSize = NoisyState<Pair>
 
 export type Move = Walk | Jump
@@ -105,6 +124,21 @@ export interface Jump {
    type: 'jump'
    direction: JumpDirection
    destination: Pair
+}
+
+// Display state - Square, grid
+export type DisplaySquare = DisplayPattern[]
+
+export type DisplayPattern = FoodPattern | BodyPattern
+
+export interface FoodPattern {
+   type: 'food'
+}
+
+export interface BodyPattern {
+   type: 'body'
+   from: Side5
+   to: Side5
 }
 
 // // //

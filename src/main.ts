@@ -15,16 +15,25 @@ export let main = async () => {
 
    let input = createInput()
 
+   let gridSize = {
+      x: config.sizeX,
+      y: config.sizeY,
+   }
+
    let engine = createEngine({
-      config,
+      gridSize,
       random,
+      topology: {
+         leftRight: config.topologyLeftRight,
+         topBottom: config.topologyTopBottom,
+      },
    })
 
    entries(input.directive).forEach(([name, observable]) => {
       observable.subscribe(engine.move[name])
    })
 
-   let display = createDisplay({ canvas, config, tailPosition: engine.getTail() })
+   let display = createDisplay({ canvas, gridSize, tailPosition: engine.getTail() })
 
    // Connecting modules
    engine.add.subscribe(display.add)

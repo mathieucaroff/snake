@@ -1,4 +1,4 @@
-import { Move, Pair, Score, Side5 } from '../type/snakepony'
+import { Move, Pair, Score, Side5, DisplayProp, Display, DisplaySquare } from '../type/snakepony'
 import { SnakeponyConfig } from '../type/snakeponyConfig'
 import { createArray2d } from '../util/array2d'
 import { getDelta, getReverse, getSide } from '../util/direction'
@@ -6,46 +6,16 @@ import { getContext2d } from '../util/getContext2d'
 import { pairAdd, pairEqual } from '../util/pair'
 import { black, lightGrey, white } from './color'
 
-// Display interface
-export interface DisplayProp {
-   canvas: HTMLCanvasElement
-   config: SnakeponyConfig
-   tailPosition: Pair
-}
-
-export interface Display {
-   resizeScreen(size: Pair, score: Score): void
-   add(move: Move): void
-   remove(): void
-   handleScore(score: Score): void
-   handleFood(food: Pair): void
-}
-
-// Display state - Square, grid
-export type DisplaySquare = DisplayPattern[]
-
-export type DisplayPattern = FoodPattern | BodyPattern
-
-export interface FoodPattern {
-   type: 'food'
-}
-
-export interface BodyPattern {
-   type: 'body'
-   from: Side5
-   to: Side5
-}
-
 // Display state - Body
 export type DisplayBody = Move[]
 
 export let createDisplay = (prop: DisplayProp): Display => {
-   let { canvas, config, tailPosition: tailPos } = prop
+   let { canvas, gridSize, tailPosition: tailPos } = prop
    let ctx = getContext2d(canvas)
 
    // State
    let headPos = { ...tailPos }
-   let grid = createArray2d<DisplaySquare>(config.gridSize, (pos) =>
+   let grid = createArray2d<DisplaySquare>(gridSize, (pos) =>
       pairEqual(pos, headPos)
          ? [
               {
@@ -80,14 +50,14 @@ export let createDisplay = (prop: DisplayProp): Display => {
          x: canvasSize.x - GAME_RIGHT_SIDE_PANEL,
          y: canvasSize.y,
       }
-      if (available.x * config.gridSize.y > available.y * config.gridSize.x) {
+      if (available.x * gridSize.y > available.y * gridSize.x) {
          // The constraint is vertical space
          // Size is decided according to window.y
-         squareSize = 2 * Math.floor(available.y / (2 * config.gridSize.y))
+         squareSize = 2 * Math.floor(available.y / (2 * gridSize.y))
       } else {
          // The constraint is horizontal space
          // Size is decided according to window.x
-         squareSize = 2 * Math.floor(available.x / (2 * config.gridSize.x))
+         squareSize = 2 * Math.floor(available.x / (2 * gridSize.x))
       }
 
       bodyThickeness = 2 * Math.ceil(squareSize / 2 / 5)
@@ -95,7 +65,7 @@ export let createDisplay = (prop: DisplayProp): Display => {
       foodSize = 2 * Math.ceil((squareSize / 2) * 0.7)
       foodOffset = squareSize / 2 - foodSize / 2
 
-      gridRightSide = config.gridSize.x * squareSize
+      gridRightSide = gridSize.x * squareSize
 
       canvas.height = canvasSize.y
       canvas.width = canvasSize.x

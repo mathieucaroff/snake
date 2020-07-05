@@ -7,11 +7,11 @@ import { createNoisyState, NoisyState } from '../util/noisyState'
 import { pairAdd, pairEqual } from '../util/pair'
 
 export let createEngine = (prop: EngineProp) => {
-   let { config, random } = prop
+   let { gridSize, random } = prop
 
-   let gridSquareNumber = config.gridSize.x * config.gridSize.y
+   let gridSquareNumber = gridSize.x * gridSize.y
 
-   let grid = createArray2d(config.gridSize, () => 0)
+   let grid = createArray2d(gridSize, () => 0)
 
    let player: Player = {
       body: [{ x: 2, y: 2 }],
@@ -38,7 +38,7 @@ export let createEngine = (prop: EngineProp) => {
       let { y, x } = newHead
 
       // collision
-      if (y < 0 || x < 0 || y >= config.gridSize.y || x >= config.gridSize.x) {
+      if (y < 0 || x < 0 || y >= gridSize.y || x >= gridSize.x) {
          return
       }
       if (grid[newHead.y][newHead.x] > 0) {

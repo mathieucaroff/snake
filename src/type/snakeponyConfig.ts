@@ -18,10 +18,6 @@ export interface SnakeponyConfig {
     */
    sizeY: number
    /**
-    * gridSize -- a convenience type which gather sizeX and sizeY
-    */
-   gridSize: Pair
-   /**
     * seed -- the seed of the game
     */
    seed: string
