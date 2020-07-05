@@ -20,13 +20,9 @@ let getConfig = (prop: InitProp) => {
       size: () => 8,
       sizeY: ({ size }) => size(),
       sizeX: ({ size }) => Math.floor(1.5 * size()),
-      gridSize: ({ sizeX, sizeY }) => ({
-         y: sizeY(),
-         x: sizeX(),
-      }),
       seed: () => randomSeed(),
-      topologyLeftRight: () => 'border',
-      topologyTopBottom: () => 'border',
+      topologyLeftRight: () => 'wall',
+      topologyTopBottom: () => 'wall',
    })
 
    console.info(`?seed=${config.seed}`)

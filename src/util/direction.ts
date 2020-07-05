@@ -1,4 +1,4 @@
-import { Direction, Pair, Side, JumpDirection } from '../type/snakepony'
+import { Direction, Pair, Side, JumpDirection, Side5 } from '../type/snakepony'
 
 export let getDelta = (direction: Direction): Pair => {
    switch (direction) {
@@ -13,7 +13,7 @@ export let getDelta = (direction: Direction): Pair => {
    }
 }
 
-export let getSide = (direction: JumpDirection): Side => {
+export let getSide = (direction: Direction): Side => {
    switch (direction) {
       case 'up':
          return 'top'
@@ -23,7 +23,14 @@ export let getSide = (direction: JumpDirection): Side => {
       case 'right':
          return direction
    }
-   throw new Error()
+}
+
+export let getSide5 = (direction: JumpDirection): Side5 => {
+   if (direction === 'in-place') {
+      return 'nowhere'
+   } else {
+      return getSide(direction)
+   }
 }
 
 export let getReverse = (side: Side): Side => {
@@ -36,5 +43,13 @@ export let getReverse = (side: Side): Side => {
          return 'right'
       case 'right':
          return 'left'
+   }
+}
+
+export let getReverse5 = (side: Side5): Side5 => {
+   if (side === 'nowhere') {
+      return side
+   } else {
+      return getReverse(side)
    }
 }

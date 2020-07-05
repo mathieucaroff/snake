@@ -1,10 +1,10 @@
 import { Subject } from 'rxjs'
 
 export let createFingerMoveManager = ({ element }) => {
-   let getTouches = (evt) => {
+   let getTouches = (event: any): MouseEvent => {
       return (
          // browser API ?? jQuery
-         evt.touches?.[0] ?? evt.originalEvent?.touches?.[0] ?? evt
+         event.touches?.[0] ?? event.originalEvent?.touches?.[0] ?? event
       )
    }
 
@@ -40,15 +40,15 @@ export let createFingerMoveManager = ({ element }) => {
       if (Math.abs(dx) > Math.abs(dy)) {
          /*most significant*/
          if (dx > 0) {
-            me.left.next()
+            directive.left.next()
          } else {
-            me.right.next()
+            directive.right.next()
          }
       } else {
          if (dy > 0) {
-            me.up.next()
+            directive.up.next()
          } else {
-            me.down.next()
+            directive.down.next()
          }
       }
 

@@ -1,7 +1,7 @@
 import { Move, Pair, Score, Side5, DisplayProp, Display, DisplaySquare } from '../type/snakepony'
 import { SnakeponyConfig } from '../type/snakeponyConfig'
 import { createArray2d } from '../util/array2d'
-import { getDelta, getReverse, getSide } from '../util/direction'
+import { getDelta, getReverse, getSide, getSide5, getReverse5 } from '../util/direction'
 import { getContext2d } from '../util/getContext2d'
 import { pairAdd, pairEqual } from '../util/pair'
 import { black, lightGrey, white } from './color'
@@ -169,65 +169,69 @@ export let createDisplay = (prop: DisplayProp): Display => {
    // Subscriptions
    //
    let add = (move: Move): void => {
-      if (move.type == 'walk') {
-         body.push(move)
+      body.push(move)
 
-         let delta = getDelta(move.direction)
-         let side = getSide(move.direction)
-         let reverseSide = getReverse(side)
+      let newHeadPos: Pair
 
-         let newHeadPos = pairAdd(headPos, delta)
-
-         let headSquare = grid[headPos.y][headPos.x]
-         let newHeadSquare = grid[newHeadPos.y][newHeadPos.x]
-
-         let headPattern = headSquare.slice(-1)[0]
-         if (headPattern.type === 'body') {
-            headPattern.to = side
-         }
-
-         newHeadSquare.push({
-            type: 'body',
-            from: reverseSide,
-            to: 'nowhere',
-         })
-
-         renderSquare(headSquare, headPos)
-         renderSquare(newHeadSquare, newHeadPos)
-
-         headPos = newHeadPos
+      if (move.type === 'walk') {
+         newHeadPos = pairAdd(headPos, getDelta(move.direction))
       } else {
-         throw new Error()
+         newHeadPos = move.destination
       }
+
+      let headSquare = grid[headPos.y][headPos.x]
+      let newHeadSquare = grid[newHeadPos.y][newHeadPos.x]
+
+      let side = getSide5(move.direction)
+      let reversedSide = getReverse5(side)
+
+      let headPattern = headSquare.slice(-1)[0]
+      if (headPattern.type === 'body') {
+         headPattern.to = side
+      }
+
+      newHeadSquare.push({
+         type: 'body',
+         from: reversedSide,
+         to: 'nowhere',
+      })
+
+      renderSquare(headSquare, headPos)
+      renderSquare(newHeadSquare, newHeadPos)
+
+      headPos = newHeadPos
    }
 
    let remove = () => {
       let move = body.shift()
-      if (move === undefined || move.type !== 'walk') {
+      if (move === undefined) {
          throw new Error()
       }
 
+      let newTailPos: Pair
+
       if (move.type === 'walk') {
-         let delta = getDelta(move.direction)
-         let newTailPos = pairAdd(tailPos, delta)
-
-         let tailSquare = grid[tailPos.y][tailPos.x]
-         let newTailSquare = grid[newTailPos.y][newTailPos.x]
-
-         tailSquare.shift()
-
-         let newTailPattern = newTailSquare.slice(-1)[0]
-         if (newTailPattern === undefined) {
-            console.log('newTailSquare', newTailSquare)
-         } else if (newTailPattern.type === 'body') {
-            newTailPattern.from = 'nowhere'
-         }
-
-         renderSquare(tailSquare, tailPos)
-         renderSquare(newTailSquare, newTailPos)
-
-         tailPos = newTailPos
+         newTailPos = pairAdd(tailPos, getDelta(move.direction))
+      } else {
+         newTailPos = move.destination
       }
+
+      let tailSquare = grid[tailPos.y][tailPos.x]
+      let newTailSquare = grid[newTailPos.y][newTailPos.x]
+
+      tailSquare.shift()
+
+      let newTailPattern = newTailSquare.slice(-1)[0]
+      if (newTailPattern === undefined) {
+         console.log('newTailSquare', newTailSquare)
+      } else if (newTailPattern.type === 'body') {
+         newTailPattern.from = 'nowhere'
+      }
+
+      renderSquare(tailSquare, tailPos)
+      renderSquare(newTailSquare, newTailPos)
+
+      tailPos = newTailPos
    }
 
    let resizeScreen = (size: Pair, score: Score): void => {

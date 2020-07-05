@@ -85,7 +85,7 @@ export interface Topology2D {
    topBottom: Topology1D
 }
 
-export type Topology1D = 'border' | 'loop' | 'crossed'
+export type Topology1D = 'wall' | 'loop' | 'crossed'
 
 //
 // Display

@@ -5,9 +5,10 @@ import { createArray2d } from '../util/array2d'
 import { getDelta } from '../util/direction'
 import { createNoisyState, NoisyState } from '../util/noisyState'
 import { pairAdd, pairEqual } from '../util/pair'
+import { mod } from '../util/mod'
 
 export let createEngine = (prop: EngineProp) => {
-   let { gridSize, random } = prop
+   let { gridSize, topology, random } = prop
 
    let gridSquareNumber = gridSize.x * gridSize.y
 
@@ -36,11 +37,36 @@ export let createEngine = (prop: EngineProp) => {
 
       let newHead = pairAdd(player.body.slice(-1)[0], delta)
       let { y, x } = newHead
+      let jumping = false
 
-      // collision
-      if (y < 0 || x < 0 || y >= gridSize.y || x >= gridSize.x) {
-         return
+      // // collision // //
+      // self collision
+      // top-bottom border
+      if (y < 0 || y >= gridSize.y) {
+         if (topology.topBottom === 'wall') {
+            return
+         } else {
+            jumping = true
+
+            newHead.y = mod(y, gridSize.y)
+            if (topology.topBottom === 'crossed') {
+               newHead.x = gridSize.x - 1 - x
+            }
+         }
       }
+      if (x < 0 || x >= gridSize.x) {
+         if (topology.leftRight === 'wall') {
+            return
+         } else {
+            jumping = true
+
+            newHead.x = mod(x, gridSize.x)
+            if (topology.leftRight === 'crossed') {
+               newHead.y = gridSize.y - 1 - y
+            }
+         }
+      }
+
       if (grid[newHead.y][newHead.x] > 0) {
          return
       }
@@ -59,10 +85,21 @@ export let createEngine = (prop: EngineProp) => {
       // moving head
       grid[newHead.y][newHead.x] += 1
       player.body.push(newHead)
-      headSubject.next({
-         type: 'walk',
-         direction,
-      })
+
+      if (jumping) {
+         console.log(newHead)
+
+         headSubject.next({
+            type: 'jump',
+            direction,
+            destination: newHead,
+         })
+      } else {
+         headSubject.next({
+            type: 'walk',
+            direction,
+         })
+      }
 
       // moving the food
       if (scoring) {

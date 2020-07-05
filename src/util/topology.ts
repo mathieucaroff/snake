@@ -13,7 +13,7 @@ let getTopologyName = (topology: Topology2D) => {
 
    topology1DArray.forEach((value) => {
       switch (value) {
-         case 'border':
+         case 'wall':
             return border++
          case 'loop':
             return loop++
@@ -48,7 +48,7 @@ export type TopologyName = ReturnType<typeof getTopologyName>
 let exampleTopologyFromName = (name: TopologyName): Topology2D => {
    switch (name) {
       case 'rectangle':
-         return { leftRight: 'border', topBottom: 'border' }
+         return { leftRight: 'wall', topBottom: 'wall' }
       case 'torus':
          return { leftRight: 'loop', topBottom: 'loop' }
       case 'real projective plan':
@@ -56,8 +56,8 @@ let exampleTopologyFromName = (name: TopologyName): Topology2D => {
       case 'klein bottle':
          return { leftRight: 'loop', topBottom: 'crossed' }
       case 'möbius strip':
-         return { leftRight: 'border', topBottom: 'crossed' }
+         return { leftRight: 'wall', topBottom: 'crossed' }
       case 'ribbon':
-         return { leftRight: 'border', topBottom: 'loop' }
+         return { leftRight: 'wall', topBottom: 'loop' }
    }
 }
