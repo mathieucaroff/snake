@@ -1,5 +1,7 @@
 import { Direction, Pair, Side, JumpDirection, Side5 } from '../type/snakepony'
 
+export let directionAll: Direction[] = ['up', 'down', 'left', 'right']
+
 export let getDelta = (direction: Direction): Pair => {
    switch (direction) {
       case 'left':

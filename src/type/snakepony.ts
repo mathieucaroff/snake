@@ -23,6 +23,10 @@ export type PonyInput = {
  */
 export interface EngineProp {
    /**
+    * feed -- how many food to put right next to the snake's head
+    */
+   feed: number
+   /**
     * gridSize -- gather the sizeX and sizeY of the board
     */
    gridSize: Pair

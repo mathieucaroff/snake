@@ -21,6 +21,7 @@ export let main = async () => {
    }
 
    let engine = createEngine({
+      feed: config.feed,
       gridSize,
       random,
       topology: {
@@ -38,7 +39,7 @@ export let main = async () => {
    // Connecting modules
    engine.add.subscribe(display.add)
    engine.remove.subscribe(display.remove)
-   engine.food.subscribe(display.handleFood)
+   engine.food.attach(display.handleFood)
    engine.score.attach(display.handleScore)
 
    screenSize.attach((size) => display.resizeScreen(size, engine.score.read()))

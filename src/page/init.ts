@@ -18,6 +18,7 @@ let getConfig = (prop: InitProp) => {
    let { location } = prop
 
    let config = getUrlParam<SnakeponyConfig>(location, {
+      feed: () => 1,
       size: () => 8,
       sizeY: ({ size }) => size(),
       sizeX: ({ size }) => Math.floor(1.5 * size()),

@@ -8,7 +8,7 @@ import { pairAdd, pairEqual } from '../util/pair'
 import { mod } from '../util/mod'
 
 export let createEngine = (prop: EngineProp) => {
-   let { gridSize, topology, random } = prop
+   let { feed: feedTarget, gridSize, topology, random } = prop
 
    let gridSquareNumber = gridSize.x * gridSize.y
 
@@ -23,7 +23,8 @@ export let createEngine = (prop: EngineProp) => {
    let headSubject = new Subject<Move>()
    let tailSubject = new Subject<void>()
    let score: NoisyState<Score> = createNoisyState(1)
-   let food: NoisyState<Pair> = createNoisyState(pairAdd(player.body[0], { x: 1, y: 0 }))
+   let food: NoisyState<Pair>
+   let feedCount = 0
 
    /**
     * move
@@ -42,7 +43,7 @@ export let createEngine = (prop: EngineProp) => {
       // // collision // //
       // self collision
       // top-bottom border
-      if (y < 0 || y >= gridSize.y) {
+      if (!inboundY(y)) {
          if (topology.topBottom === 'wall') {
             return
          } else {
@@ -54,7 +55,7 @@ export let createEngine = (prop: EngineProp) => {
             }
          }
       }
-      if (x < 0 || x >= gridSize.x) {
+      if (!inboundX(x)) {
          if (topology.leftRight === 'wall') {
             return
          } else {
@@ -73,14 +74,6 @@ export let createEngine = (prop: EngineProp) => {
 
       // food
       let scoring = pairEqual(food.read(), newHead)
-
-      // moving tail
-      if (!scoring) {
-         let tail = player.body[0]
-         grid[tail.y][tail.x] -= 1
-         player.body.shift()
-         tailSubject.next()
-      }
 
       // moving head
       grid[newHead.y][newHead.x] += 1
@@ -101,19 +94,61 @@ export let createEngine = (prop: EngineProp) => {
          })
       }
 
+      // moving tail
+      if (!scoring) {
+         let tail = player.body[0]
+         grid[tail.y][tail.x] -= 1
+         player.body.shift()
+         tailSubject.next()
+      }
+
       // moving the food
       if (scoring) {
          score.write(score.read() + 1)
-         food.write(randomFoodPosition())
+         let pos = nextFoodPosition()
+         if (pos !== undefined) {
+            food.write(pos)
+         }
       }
    }
 
-   let getTail = () => {
-      return player.body[0]
+   let nextFoodPosition = (): Pair | undefined => {
+      if (feedCount < feedTarget) {
+         feedCount++
+         return feedingFoodPosition()
+      }
+
+      return randomFoodPosition()
    }
 
-   let randomFoodPosition = (): Pair => {
+   let feedingFoodPosition = (): Pair | undefined => {
+      let head = player.body.slice(-1)[0]
+      let directionList: Direction[] = ['right', 'left', 'down', 'up']
+      if (head.x === 0 && head.y > 0) {
+         directionList = ['up', 'down']
+      }
+
+      let posList = directionList.map((direction) => {
+         let pos = pairAdd(head, getDelta(direction))
+         return pos
+      })
+
+      let availablePos = posList.filter(valid)
+      let nonLeftPos = availablePos.filter(({ x }) => x > 0)
+      if (nonLeftPos.length > 0) {
+         return nonLeftPos[0]
+      } else if (availablePos.length > 0) {
+         return availablePos[0]
+      }
+      return randomFoodPosition()
+   }
+
+   let randomFoodPosition = (): Pair | undefined => {
       let optionCount = gridSquareNumber - player.body.length
+      if (optionCount === 0) {
+         return undefined
+      }
+
       let index = Math.floor(random() * optionCount) % optionCount
       let foodPosition: any
 
@@ -140,9 +175,27 @@ export let createEngine = (prop: EngineProp) => {
       return foodPosition
    }
 
+   let valid = (pos: Pair) => {
+      return inboundY(pos.y) && inboundX(pos.x) && grid[pos.y][pos.x] === 0
+   }
+
+   let inboundX = (x: number) => {
+      return 0 <= x && x < gridSize.x
+   }
+
+   let inboundY = (y: number) => {
+      return 0 <= y && y < gridSize.y
+   }
+
+   let getTail = () => {
+      return player.body[0]
+   }
+
    let flushInit = () => {
       move('right')
    }
+
+   food = createNoisyState(nextFoodPosition()!)
 
    let me: Engine = {
       add: headSubject,

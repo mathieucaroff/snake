@@ -27,4 +27,8 @@ export interface SnakeponyConfig {
    topology: string
    topologyLeftRight: Topology1D
    topologyTopBottom: Topology1D
+   /**
+    * feed -- specify a number of food to place right next to the snake's head
+    */
+   feed: number
 }

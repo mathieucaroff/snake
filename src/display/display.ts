@@ -1,7 +1,6 @@
-import { Move, Pair, Score, Side5, DisplayProp, Display, DisplaySquare } from '../type/snakepony'
-import { SnakeponyConfig } from '../type/snakeponyConfig'
+import { Display, DisplayProp, DisplaySquare, Move, Pair, Score, Side5 } from '../type/snakepony'
 import { createArray2d } from '../util/array2d'
-import { getDelta, getReverse, getSide, getSide5, getReverse5 } from '../util/direction'
+import { getDelta, getReverse5, getSide5 } from '../util/direction'
 import { getContext2d } from '../util/getContext2d'
 import { pairAdd, pairEqual } from '../util/pair'
 import { black, lightGrey, white } from './color'
@@ -20,8 +19,8 @@ export let createDisplay = (prop: DisplayProp): Display => {
          ? [
               {
                  type: 'body',
-                 from: 'right',
-                 to: 'right',
+                 from: 'nowhere',
+                 to: 'nowhere',
               },
            ]
          : [],
