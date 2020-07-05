@@ -32,10 +32,10 @@ export let createInput = (): PonyInput => {
    let fmmDirective = fingerMoveManager.directive
 
    let directive: Directive<Observable<void>> = {
-      up: makeObservable(['ArrowUp', 'e'], fmmDirective.up),
-      left: makeObservable(['ArrowLeft', 's'], fmmDirective.left),
-      down: makeObservable(['ArrowDown', 'd'], fmmDirective.down),
-      right: makeObservable(['ArrowRight', 'f'], fmmDirective.right),
+      up: makeObservable(['ArrowUp', 'e', 'k'], fmmDirective.up),
+      left: makeObservable(['ArrowLeft', 's', 'h'], fmmDirective.left),
+      down: makeObservable(['ArrowDown', 'd', 'j'], fmmDirective.down),
+      right: makeObservable(['ArrowRight', 'f', 'l'], fmmDirective.right),
    }
 
    return {
