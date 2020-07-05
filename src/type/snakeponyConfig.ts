@@ -31,4 +31,6 @@ export interface SnakeponyConfig {
     * feed -- specify a number of food to place right next to the snake's head
     */
    feed: number
+   /** showMoveCount -- whether to show in game the number of move the player made */
+   showMoveCount: boolean
 }

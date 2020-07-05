@@ -39,6 +39,7 @@ export let main = async () => {
    let display = createDisplay({
       canvas,
       gridSize,
+      showMoveCount: config.showMoveCount,
       tailPosition: engine.getTail(),
       topology,
    })

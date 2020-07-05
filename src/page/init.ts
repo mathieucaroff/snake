@@ -23,6 +23,7 @@ let getConfig = (prop: InitProp) => {
       sizeY: ({ size }) => size(),
       sizeX: ({ size }) => Math.floor(1.5 * size()),
       seed: () => randomSeed(),
+      showMoveCount: () => false,
       topology: () => 'rectangle',
       topologyLeftRight: ({ topology }) => topologyFromName(topology())?.leftRight ?? 'wall',
       topologyTopBottom: ({ topology }) => topologyFromName(topology())?.topBottom ?? 'wall',

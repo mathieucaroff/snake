@@ -22,7 +22,10 @@ export let createEngine = (prop: EngineProp) => {
 
    let headSubject = new Subject<Move>()
    let tailSubject = new Subject<void>()
-   let score: NoisyState<Score> = createNoisyState(1)
+   let score: NoisyState<Score> = createNoisyState({
+      moveCount: -1,
+      snakeSize: 1,
+   })
    let food: NoisyState<Pair>
    let feedCount = 0
 
@@ -104,11 +107,20 @@ export let createEngine = (prop: EngineProp) => {
 
       // moving the food
       if (scoring) {
-         score.write(score.read() + 1)
          let pos = nextFoodPosition()
          if (pos !== undefined) {
             food.write(pos)
          }
+      }
+
+      // update the score
+      score.write({
+         moveCount: score.read().moveCount + 1,
+         snakeSize: score.read().snakeSize + +scoring,
+      })
+
+      if (scoring && player.body.length === gridSquareNumber) {
+         console.info('move count:', score.read().moveCount)
       }
    }
 

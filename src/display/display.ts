@@ -9,7 +9,7 @@ import { black, lightGrey, white, darkCoal } from './color'
 export type DisplayBody = Move[]
 
 export let createDisplay = (prop: DisplayProp): Display => {
-   let { canvas, gridSize, tailPosition: tailPos, topology } = prop
+   let { canvas, gridSize, showMoveCount, tailPosition: tailPos, topology } = prop
    let ctx = getContext2d(canvas)
 
    // State
@@ -171,7 +171,7 @@ export let createDisplay = (prop: DisplayProp): Display => {
    }
 
    let renderScore = (score: Score) => {
-      if (score <= 2) {
+      if (score.moveCount <= 0) {
          return
       }
       ctx.fillStyle = black
@@ -186,10 +186,17 @@ export let createDisplay = (prop: DisplayProp): Display => {
       ctx.fillStyle = 'white'
       ctx.strokeStyle = 'black'
 
-      let text = `${score}`
+      displayText(`${score.snakeSize}`, { x, y })
+      let yMove = Math.max(boardBottom - 60, y + 48)
+      if (showMoveCount) {
+         displayText(`${score.moveCount}`, { x, y: yMove })
+      }
+   }
+
+   let displayText = (text: string, pos: Pair) => {
       ctx.lineWidth = 5
-      ctx.strokeText(text, x, y)
-      ctx.fillText(text, x, y)
+      ctx.strokeText(text, pos.x, pos.y)
+      ctx.fillText(text, pos.x, pos.y)
    }
 
    //
@@ -267,7 +274,7 @@ export let createDisplay = (prop: DisplayProp): Display => {
    }
 
    // Score
-   let handleScore = (score: number): void => {
+   let handleScore = (score: Score): void => {
       renderScore(score)
    }
 

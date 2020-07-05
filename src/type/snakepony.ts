@@ -77,7 +77,10 @@ export interface Player {
  */
 export type Progression = 'playing' | 'victory' | 'defeat'
 
-export type Score = number
+export type Score = {
+   moveCount: number
+   snakeSize: number
+}
 
 /**
  * Topology -- the topological shape of the board
@@ -98,6 +101,7 @@ export type Topology1D = 'wall' | 'loop' | 'crossed'
 export interface DisplayProp {
    canvas: HTMLCanvasElement
    gridSize: Pair
+   showMoveCount: boolean
    tailPosition: Pair
    topology: Topology2D
 }
