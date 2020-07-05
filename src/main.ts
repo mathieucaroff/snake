@@ -3,6 +3,7 @@ import { createEngine } from './core/engine'
 import { createDisplay } from './display/display'
 import { createInput } from './input/input'
 import { init } from './page/init'
+import { entries } from './util/entries'
 import { spacelessURL } from './util/urlParam'
 
 export let main = async () => {
@@ -19,10 +20,9 @@ export let main = async () => {
       random,
    })
 
-   input.left.subscribe(engine.move.left)
-   input.right.subscribe(engine.move.right)
-   input.up.subscribe(engine.move.up)
-   input.down.subscribe(engine.move.down)
+   entries(input.directive).forEach(([name, observable]) => {
+      observable.subscribe(engine.move[name])
+   })
 
    let display = createDisplay({ canvas, config, tailPosition: engine.getTail() })
 

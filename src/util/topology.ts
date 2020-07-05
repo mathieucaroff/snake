@@ -1,18 +1,18 @@
 import { Topology2D } from '../type/snakepony'
 
-let getTopologyName = (t: Topology2D) => {
+let getTopologyName = (topology: Topology2D) => {
    let border = 0
    let loop = 0
    let crossed = 0
 
-   let vArray = Object.values(t)
+   let topology1DArray = Object.values(topology)
 
-   if (vArray.length !== 2) {
+   if (topology1DArray.length !== 2) {
       throw new Error()
    }
 
-   vArray.forEach((v) => {
-      switch (v) {
+   topology1DArray.forEach((value) => {
+      switch (value) {
          case 'border':
             return border++
          case 'loop':

@@ -86,11 +86,15 @@ export let createFingerMoveManager = ({ element }) => {
       element.removeEventListener('mouseup', handleMouseUp, false)
    }
 
-   let me = {
+   let directive = {
       left: new Subject<void>(),
       right: new Subject<void>(),
       up: new Subject<void>(),
       down: new Subject<void>(),
+   }
+
+   let me = {
+      directive,
       removeAll,
    }
 

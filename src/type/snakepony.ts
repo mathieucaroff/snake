@@ -14,8 +14,7 @@ import { SnakeponyConfig } from './snakeponyConfig'
  * direction
  */
 export type PonyInput = {
-   [k in Direction]: Observable<void>
-} & {
+   directive: Directive<Observable<void>>
    removeAll: () => void
 }
 
@@ -55,9 +54,7 @@ export interface Engine {
     * flushInit -- a hook that needs to be called once all instances are connected
     */
    flushInit(): void
-   move: {
-      [k in Direction]: () => any
-   }
+   move: Directive<() => any>
 }
 
 /**
@@ -118,6 +115,10 @@ export interface Jump {
  * Direction -- one of the four direction of a 2d board
  */
 export type Direction = 'up' | 'down' | 'left' | 'right'
+
+export type Directive<T> = {
+   [k in Direction]: T
+}
 
 /**
  * JumpDirection -- a Direction that can also be "neutral" ("in-place")

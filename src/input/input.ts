@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs'
-import { PonyInput } from '../type/snakepony'
+import { PonyInput, Directive } from '../type/snakepony'
 import { createKeyboardManager } from './keyboardManager'
 import { createFingerMoveManager } from './fingerMoveManager'
 
@@ -25,11 +25,17 @@ export let createInput = (): PonyInput => {
       })
    }
 
+   let fmmDirective = fingerMoveManager.directive
+
+   let directive: Directive<Observable<void>> = {
+      left: makeObservable('ArrowLeft', fmmDirective.left),
+      right: makeObservable('ArrowRight', fmmDirective.right),
+      up: makeObservable('ArrowUp', fmmDirective.up),
+      down: makeObservable('ArrowDown', fmmDirective.down),
+   }
+
    return {
-      left: makeObservable('ArrowLeft', fingerMoveManager.left),
-      right: makeObservable('ArrowRight', fingerMoveManager.right),
-      up: makeObservable('ArrowUp', fingerMoveManager.up),
-      down: makeObservable('ArrowDown', fingerMoveManager.down),
+      directive,
       removeAll: () => {
          keyboard.removeAll()
          fingerMoveManager.removeAll()
