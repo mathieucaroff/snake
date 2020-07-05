@@ -13,13 +13,17 @@ export let createInput = (): PonyInput => {
       element: document.documentElement,
    })
 
-   let makeObservable = (key: string, swipe: Subject) => {
+   let makeObservable = (keyList: string[], swipe: Subject) => {
       return new Observable<void>((subscriber) => {
          let callback = () => subscriber.next()
          let subS = swipe.subscribe(callback)
-         let subK = keyboard.onKeydown(key, callback)
+         let subKList = keyList.map((key) => {
+            return keyboard.onKeydown(key, callback)
+         })
          return () => {
-            subK.remove()
+            subKList.forEach((subK) => {
+               subK.remove()
+            })
             subS.remove(subS)
          }
       })
@@ -28,10 +32,10 @@ export let createInput = (): PonyInput => {
    let fmmDirective = fingerMoveManager.directive
 
    let directive: Directive<Observable<void>> = {
-      left: makeObservable('ArrowLeft', fmmDirective.left),
-      right: makeObservable('ArrowRight', fmmDirective.right),
-      up: makeObservable('ArrowUp', fmmDirective.up),
-      down: makeObservable('ArrowDown', fmmDirective.down),
+      up: makeObservable(['ArrowUp', 'e'], fmmDirective.up),
+      left: makeObservable(['ArrowLeft', 's'], fmmDirective.left),
+      down: makeObservable(['ArrowDown', 'd'], fmmDirective.down),
+      right: makeObservable(['ArrowRight', 'f'], fmmDirective.right),
    }
 
    return {
