@@ -49,17 +49,17 @@ export let topologyFromName = (name: string): Topology2D | undefined => {
    let topology: Topology2D | undefined = undefined
 
    if (false) {
-   } else if (name.match(/rect|square|normal|wall/)) {
+   } else if (name.match(/\b(rect|square|normal|wall)/)) {
       topology = { leftRight: 'wall', topBottom: 'wall' }
-   } else if (name.match(/torus/)) {
+   } else if (name.match(/\btorus/)) {
       topology = { leftRight: 'loop', topBottom: 'loop' }
-   } else if (name.match(/real|projective|plan/)) {
+   } else if (name.match(/\b(real|projective|plan)/)) {
       topology = { leftRight: 'crossed', topBottom: 'crossed' }
-   } else if (name.match(/klein|bottle/)) {
+   } else if (name.match(/\b(klein|bottle)/)) {
       topology = { leftRight: 'loop', topBottom: 'crossed' }
-   } else if (name.match(/m..?bius|strip/)) {
+   } else if (name.match(/\b(m..?bius|strip)/)) {
       topology = { leftRight: 'wall', topBottom: 'crossed' }
-   } else if (name.match(/ribbon|loop/)) {
+   } else if (name.match(/\b(ribbon|loop)/)) {
       topology = { leftRight: 'wall', topBottom: 'loop' }
    }
 
@@ -67,7 +67,7 @@ export let topologyFromName = (name: string): Topology2D | undefined => {
       return
    }
 
-   if (name.match(/long/)) {
+   if (name.match(/\b(long|alt)/)) {
       topology = {
          leftRight: topology.topBottom,
          topBottom: topology.leftRight,
