@@ -49,13 +49,20 @@ If you want to challenge yourself a bit, you can add `?showMoveCount` in the URL
 
 ## Contributing
 
-Use `yarn install` to install the dependencies
+If you have any idea that you'd like to see added to the game, please create an
+issue in the [issue tracker](https://github.com/mathieucaroff/snakepony/issues) to share your feature request with us (remember to search-check for duplicate issues first).
+
+You're also welcome to report bugs, ask questions and make other use of the issue tracker, as you see fit. We try to be welcoming.
+
+## Contributing (developer)
+
+Use `yarn install` to install the dependencies. See [yarnpkg.com](https://classic.yarnpkg.com/en/docs/getting-started).
 
 Use `./tsc.cmd` to run typescript type checking.
 
 Use `./parcel.cmd` to run the development server.
 
-The project is built by now.sh using `npm run build` (on a linux machine).
+All branches and pull requests to are built and deployed by Vercel who runs the now.sh service. Verecel runs `npm run build` -on a linux machine- to build the project.
 
 ## Info
 
