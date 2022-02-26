@@ -1,9 +1,18 @@
-import { Display, DisplayProp, DisplaySquare, Move, Pair, Score, Side5 } from '../type/snakepony'
+import {
+   BodyPattern,
+   Display,
+   DisplayProp,
+   DisplaySquare,
+   Move,
+   Pair,
+   Score,
+   Side5,
+} from '../type/snakepony'
 import { createArray2d } from '../util/array2d'
 import { getDelta, getReverse5, getSide5 } from '../util/direction'
 import { getContext2d } from '../util/getContext2d'
 import { pairAdd, pairEqual } from '../util/pair'
-import { black, lightGrey, white, darkCoal } from './color'
+import { black, lightGrey, white, darkCoal, purple, coal } from './color'
 
 // Display state - Body
 export type DisplayBody = Move[]
@@ -32,6 +41,8 @@ export let createDisplay = (prop: DisplayProp): Display => {
    let squareSize: number
    let bodyThickeness: number
    let bodyOffset: number
+   let headSize: number
+   let headOffset: number
    let foodSize: number
    let foodOffset: number
    let boardRightSide: number
@@ -66,6 +77,8 @@ export let createDisplay = (prop: DisplayProp): Display => {
 
       bodyThickeness = 2 * Math.ceil(squareSize / 2 / 5)
       bodyOffset = squareSize / 2 - bodyThickeness / 2
+      headSize = 2 * Math.ceil(bodyThickeness / 4)
+      headOffset = squareSize / 2 - headSize / 2
       foodSize = 2 * Math.ceil((squareSize / 2) * 0.7)
       foodOffset = squareSize / 2 - foodSize / 2
 
@@ -130,6 +143,9 @@ export let createDisplay = (prop: DisplayProp): Display => {
          } else {
             renderBody(pair, pattern.from)
             renderBody(pair, pattern.to)
+            if (pattern.type === 'head') {
+               renderHead(pair)
+            }
          }
       })
    }
@@ -166,7 +182,16 @@ export let createDisplay = (prop: DisplayProp): Display => {
          w += bodyOffset
       }
 
-      ctx.fillStyle = lightGrey
+      ctx.fillStyle = coal
+      ctx.fillRect(x, y, w, h)
+   }
+
+   let renderHead = (pos: Pair) => {
+      let x = GAME_BORDER_X + squareSize * pos.x + headOffset
+      let y = GAME_BORDER_Y + squareSize * pos.y + headOffset
+      let w = headSize
+      let h = headSize
+      ctx.fillStyle = white
       ctx.fillRect(x, y, w, h)
    }
 
@@ -220,12 +245,15 @@ export let createDisplay = (prop: DisplayProp): Display => {
       let reversedSide = getReverse5(side)
 
       let headPattern = headSquare.slice(-1)[0]
-      if (headPattern.type === 'body') {
+      if (headPattern.type === 'body' || headPattern.type === 'head') {
          headPattern.to = side
+      }
+      if (headPattern.type === 'head') {
+         ;(headPattern as any).type = 'body'
       }
 
       newHeadSquare.push({
-         type: 'body',
+         type: 'head',
          from: reversedSide,
          to: 'nowhere',
       })

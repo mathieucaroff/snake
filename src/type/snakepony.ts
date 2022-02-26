@@ -2,7 +2,6 @@ import { Observable } from 'rxjs'
 
 import { prng } from '../lib/seedrandom'
 import { NoisyState } from '../util/noisyState'
-import { SnakeponyConfig } from './snakeponyConfig'
 
 // // //
 // Module types
@@ -138,7 +137,7 @@ export interface Jump {
 // Display state - Square, grid
 export type DisplaySquare = DisplayPattern[]
 
-export type DisplayPattern = FoodPattern | BodyPattern
+export type DisplayPattern = FoodPattern | BodyPattern | HeadPattern
 
 export interface FoodPattern {
    type: 'food'
@@ -146,6 +145,11 @@ export interface FoodPattern {
 
 export interface BodyPattern {
    type: 'body'
+   from: Side5
+   to: Side5
+}
+export interface HeadPattern {
+   type: 'head'
    from: Side5
    to: Side5
 }

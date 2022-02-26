@@ -1,4 +1,4 @@
-# SnakePony
+# Snake
 
 A simple non-ticking snake game which supports playing with any board size.
 
