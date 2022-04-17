@@ -5,8 +5,9 @@
    "license": "CC0-1.0",
    "version": "1.0.0",
    "scripts": {
-      "build": "parcel build src/snake.html --public-url snake.d",
-      "start": "parcel start src/snake.html"
+      "build": "parcel build src/index.html --dist-dir public",
+      "mcabuild": "parcel build src/index.html --public-url snake.d",
+      "start": "parcel start src/index.html"
    },
    "devDependencies": {
       "@types/node": "^13.9.1",
