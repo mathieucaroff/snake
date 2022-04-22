@@ -28,6 +28,7 @@ let getConfig = (prop: InitProp) => {
       topologyLeftRight: ({ topology }) => topologyFromName(topology())?.leftRight ?? 'wall',
       topologyTopBottom: ({ topology }) => topologyFromName(topology())?.topBottom ?? 'wall',
       ai: () => 'none',
+      aiSpeed: () => 10,
    })
 
    console.info(`?seed=${config.seed}`)

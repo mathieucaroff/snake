@@ -37,4 +37,8 @@ export interface SnakeponyConfig {
     * ai -- which Artificial Intelligence to have play for us
     */
    ai: 'none' | 'loop'
+   /**
+    * aiSpeed -- at what speed does the AI operate (play frequency)
+    */
+   aiSpeed: number
 }

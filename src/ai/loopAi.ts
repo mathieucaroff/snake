@@ -1,6 +1,7 @@
 import { Directive } from '../type/snakepony'
+import { SnakeponyConfig } from '../type/snakeponyConfig'
 
-export function createLoopAi(config, fastMove: Directive<() => any>) {
+export function createLoopAi(config: SnakeponyConfig, fastMove: Directive<() => any>) {
    if (config.sizeY % 2 > 0) {
       throw new Error('the height of the board must be a multiple of 2')
    }
@@ -10,7 +11,7 @@ export function createLoopAi(config, fastMove: Directive<() => any>) {
          return [
             name,
             async () => {
-               await new Promise((resolve) => setTimeout(resolve, 100))
+               await new Promise((resolve) => setTimeout(resolve, 1000 / config.aiSpeed))
                moveFunction()
             },
          ]
