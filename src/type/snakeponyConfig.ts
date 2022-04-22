@@ -33,4 +33,8 @@ export interface SnakeponyConfig {
    feed: number
    /** showMoveCount -- whether to show in game the number of move the player made */
    showMoveCount: boolean
+   /**
+    * ai -- which Artificial Intelligence to have play for us
+    */
+   ai: 'none' | 'loop'
 }

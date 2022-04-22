@@ -1,4 +1,5 @@
 import { default as seedrandom } from 'seedrandom'
+import { createLoopAi } from './ai/loopAi'
 import { createEngine } from './core/engine'
 import { createDisplay } from './display/display'
 import { createInput } from './input/input'
@@ -53,4 +54,8 @@ export let main = async () => {
    screenSize.attach((size) => display.resizeScreen(size, engine.score.read()))
 
    engine.flushInit()
+
+   if (config.ai === 'loop') {
+      createLoopAi(config, engine.move)
+   }
 }
