@@ -1,11 +1,11 @@
 {
    "name": "snakepony",
-   "description": "A simple snake game HTML5-canvas TS game with ponies",
-   "repository": "https://github.com/mathieucaroff/snakepony",
+   "description": "A simple snake game using HTML5-canvas written in TypeScript",
+   "repository": "https://github.com/mathieucaroff/snake",
    "license": "CC0-1.0",
    "version": "1.0.0",
    "scripts": {
-      "build": "parcel build src/index.html --dist-dir public",
+      "build": "parcel build src/index.html",
       "mcabuild": "parcel build src/index.html --public-url snake.d",
       "serve": "parcel serve src/index.html"
    },
