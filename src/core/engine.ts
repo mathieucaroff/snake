@@ -28,6 +28,7 @@ export let createEngine = (prop: EngineProp) => {
    })
    let food: NoisyState<Pair>
    let feedCount = 0
+   let lastMoveDirection = 'right' as Direction
 
    /**
     * move
@@ -36,6 +37,7 @@ export let createEngine = (prop: EngineProp) => {
     * @param direction
     */
    let move = (direction: Direction) => {
+      lastMoveDirection = direction
       //  The delta Pair that leads the player to an odd wall
       let delta = getDelta(direction)
 
@@ -209,6 +211,10 @@ export let createEngine = (prop: EngineProp) => {
 
    food = createNoisyState(nextFoodPosition()!)
 
+   let repeatLastMove = () => {
+      move(lastMoveDirection)
+   }
+
    let me: Engine = {
       add: headSubject,
       remove: tailSubject,
@@ -216,6 +222,7 @@ export let createEngine = (prop: EngineProp) => {
       food,
       getTail,
       flushInit,
+      repeatLastMove,
       move: {
          left: () => move('left'),
          right: () => move('right'),

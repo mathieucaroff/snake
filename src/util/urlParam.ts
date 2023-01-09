@@ -18,18 +18,12 @@ export let spacelessURL = (location: Location) => {
    if (location.href.includes(' ')) throw new Error()
 }
 
-export let getUrlParam = <T>(
-   location: Location,
-   defaultConfig: DefaultConfigObject<T>,
-) => {
+export let getUrlParam = <T>(location: Location, defaultConfig: DefaultConfigObject<T>) => {
    let config: T = {} as any
 
-   let pieceList = location.search.split('?').slice(1)
+   let pieceList = location.search.slice(1).split('&')
 
-   let stack = (
-      config: T,
-      defaultConfig: DefaultConfigObject<T>,
-   ): Indirect<T> => {
+   let stack = (config: T, defaultConfig: DefaultConfigObject<T>): Indirect<T> => {
       let stackedConfig = {} as Indirect<T>
 
       Object.keys(defaultConfig).forEach((key) => {

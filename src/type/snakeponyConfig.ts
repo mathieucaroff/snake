@@ -41,4 +41,9 @@ export interface SnakeponyConfig {
     * aiSpeed -- at what speed does the AI operate (play frequency)
     */
    aiSpeed: number
+   /**
+    * tickPeriod -- 0 by default. The value 0 disables the ticking. The
+    * value is in miliseconds
+    */
+   tickPeriod: number
 }

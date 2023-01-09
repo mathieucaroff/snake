@@ -33,8 +33,25 @@ export let main = async () => {
       topology,
    })
 
+   let timeoutHandle: ReturnType<typeof setTimeout>
+   let tickLoop = () => {
+      if (config.tickPeriod > 0) {
+         engine.repeatLastMove()
+         timeoutHandle = setTimeout(tickLoop, config.tickPeriod)
+      }
+   }
+   let resetTickTime = () => {
+      clearTimeout(timeoutHandle)
+      if (config.tickPeriod > 0) {
+         timeoutHandle = setTimeout(tickLoop, config.tickPeriod)
+      }
+   }
+
    entries(input.directive).forEach(([name, observable]) => {
-      observable.subscribe(engine.move[name])
+      observable.subscribe(() => {
+         resetTickTime()
+         engine.move[name]()
+      })
    })
 
    let display = createDisplay({

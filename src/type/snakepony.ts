@@ -61,6 +61,13 @@ export interface Engine {
     * flushInit -- a hook that needs to be called once all instances are connected
     */
    flushInit(): void
+   /**
+    * repeatLastMove -- a method which moves the snake by one in the last move direction
+    */
+   repeatLastMove(): void
+   /**
+    * move -- an object containing a parameterless method for each of the four directions
+    */
    move: Directive<() => any>
 }
 
